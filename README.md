@@ -18,7 +18,7 @@
 
 ```bash 
 # Baixe o repositório ou clone usando o comando:
-  git clone https://github.com/TheAchieversDSM/API-2023.2-Back-End.git
+  git clone https://github.com/TheAchieversDSM/API-2024.1-Back-End.git
   
 # Utilize a IDE desejada:
  (VS Code, Sublime, Atom etc...)
