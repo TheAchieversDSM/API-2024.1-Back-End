@@ -1,13 +1,14 @@
 import express from "express";
 import cors from "cors";
+import { DataBaseSource } from "./config/database";
 
-// DataBaseSource.initialize()
-//   .then(() => {
-//     console.log("Banco inicializado com sucesso!");
-//   })
-//   .catch((err) => {
-//     console.error("Erro durante a inicialização do banco: ", err);
-//   });
+DataBaseSource.initialize()
+  .then(() => {
+    console.log("Banco inicializado com sucesso!");
+  })
+  .catch((err) => {
+    console.error("Erro durante a inicialização do banco: ", err);
+  });
 
 
 const app = express();
@@ -20,6 +21,6 @@ app.listen(port, () => {
 
 app.use(cors());
 app.use(express.json());
-app.use(router);
+// app.use(router);
 
 export default app;

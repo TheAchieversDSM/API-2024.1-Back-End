@@ -2,10 +2,10 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 import fs from "fs";
-
+import { User, BaseImportLog, Product, Comment, Summary } from "../models";
 dotenv.config();
 
-const entidades = [""];
+const entidades = [User, BaseImportLog, Product, Comment, Summary];
 
 export const DataBaseSource = process.env.PATH_PEM
   ? new DataSource({
@@ -15,6 +15,7 @@ export const DataBaseSource = process.env.PATH_PEM
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DATABASE,
+      schema: process.env.SCHEMA,
       synchronize: true,
       logging: false,
       ssl: {
@@ -29,6 +30,7 @@ export const DataBaseSource = process.env.PATH_PEM
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DATABASE,
+      schema: process.env.SCHEMA,
       synchronize: true,
       logging: false,
       entities: entidades,
