@@ -1,1 +1,3 @@
-// Exportar todos os modulos aqui
+import DataController from "./mockDataController";
+
+export default DataController;

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { DataBaseSource } from "./config/database";
+import router from "./routes";
 
 DataBaseSource.initialize()
   .then(() => {
@@ -13,7 +14,7 @@ DataBaseSource.initialize()
 
 const app = express();
 
-let port = process.env.PORT_PRODUCTION || 5000;
+let port = process.env.PORT_PRODUCTION || 1313;
 
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
@@ -21,6 +22,6 @@ app.listen(port, () => {
 
 app.use(cors());
 app.use(express.json());
-// app.use(router);
+app.use(router);
 
 export default app;
