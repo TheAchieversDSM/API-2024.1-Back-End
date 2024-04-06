@@ -1,5 +1,5 @@
 import { Router } from "express";
-import DataController from "../controllers/index";
+import {DataController} from "../controllers/index";
 
 const mockDataRouter = Router();
 

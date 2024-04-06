@@ -1,3 +1,4 @@
+import BaseImportController from "./baseImportController";
 import DataController from "./mockDataController";
 
-export default DataController;
+export { DataController, BaseImportController };
