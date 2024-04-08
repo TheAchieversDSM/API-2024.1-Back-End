@@ -1,8 +1,10 @@
+
 import { Request, Response } from 'express';
 import multer from 'multer';
 import xlsx from 'xlsx';
 import csvParser from 'csv-parser';
-import { Readable, Transform } from 'stream';
+import { Readable } from 'stream';
+import ProductService from '../services/productService';
 
 class BaseImportController {
     public async uploadFile(req: Request, res: Response) {
@@ -38,7 +40,8 @@ class BaseImportController {
                     csvReadableStream.push(req.file.buffer);
                     csvReadableStream.push(null);
                     csvReadableStream.pipe(csvTransform)
-                        .on('data', (data) => {
+                        .on('data', async (data) => {
+                            await ProductService.checkAndSaveProduct(data.product_id, data.product_name, data.site_category_lv1, data.site_category_lv2);
                             dataArray.push(data);
                         })
                         .on('end', () => {
