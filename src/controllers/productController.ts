@@ -74,6 +74,20 @@ class ProductController {
         }
     }
 
+    public async getAverageRatingByCategory(req: Request, res: Response): Promise<void> {
+      const category = req.params.category;
+      const startDate = req.body.startDate;
+      const endDate = req.body.endDate;
+      
+      try {
+          const averageRating = await productService.getAverageRatingByCategory(category, startDate, endDate);
+          res.status(200).json(averageRating);
+      } catch (error) {
+          console.error('Error fetching product average rating by category:', error);
+          res.status(500).json({ message: 'Internal server error' });
+      }
+  }
+
 }
 
 export default ProductController;
