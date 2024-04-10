@@ -6,6 +6,11 @@ type AverageResponse =[{
     date: string;
     averageRating: number;
 }]
+
+interface AverageRatingByCategory {
+    category: string;
+    averageRating: number;
+}
 class ProductService {
     
     public async checkAndSaveProduct(productId: string, productName: string, siteCategoryLv1: string, siteCategoryLv2: string): Promise<Product> {
@@ -115,7 +120,55 @@ class ProductService {
             throw error;
         }
     }
+
+    public async getAverageRatingByCategory(category: string, startDate: string = '2000-01-01', endDate: string = '3099-12-31'): Promise<{ date: string; averageRating: number }[]> {
+        try {
+            const productRepository = getRepository(Product);
     
+            const products = await productRepository.find({
+                where: { category },
+                relations: ['comments']
+            });
+    
+            if (!products.length) {
+                throw new Error('No products found in this category');
+            }
+    
+            const averageRatings: { [date: string]: number[] } = {}; 
+    
+            for (const product of products) {
+                const comments = await commentService.getCommentsByProductId(String(product.id));
+                console.log('Comments for product', product.id, ':', comments);
+                for (const comment of comments) {
+                    const commentDate = new Date(comment.date).toISOString().split('T')[0];
+                    console.log('Comment date:', commentDate);
+                    console.log('Start date:', startDate, 'End date:', endDate);
+                    if (startDate && endDate && commentDate >= startDate && commentDate <= endDate) {
+                        if (!averageRatings[commentDate]) {
+                            averageRatings[commentDate] = [];
+                        }
+                        averageRatings[commentDate].push(comment.rating);
+                    }
+                }
+            }
+    
+            const averageResponse: { date: string; averageRating: number }[] = [];
+            for (const date in averageRatings) {
+                const ratings = averageRatings[date];
+                const averageRating = parseFloat((ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1));
+                averageResponse.push({ date, averageRating });
+            }
+    
+            console.log('Average ratings:', averageResponse);
+    
+            return averageResponse;
+    
+        } catch (error) {
+            console.error('Error getting product average rating by category:', error);
+            throw error;
+        }
+    }
+      
 }
 
 export default new ProductService();
