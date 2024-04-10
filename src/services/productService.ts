@@ -138,7 +138,7 @@ class ProductService {
     
             for (const product of products) {
                 const comments = await commentService.getCommentsByProductId(String(product.id));
-                console.log('Comments for product', product.id, ':', comments);
+
                 for (const comment of comments) {
                     const commentDate = new Date(comment.date).toISOString().split('T')[0];
                     console.log('Comment date:', commentDate);
@@ -159,7 +159,6 @@ class ProductService {
                 averageResponse.push({ date, averageRating });
             }
     
-            console.log('Average ratings:', averageResponse);
     
             return averageResponse;
     
