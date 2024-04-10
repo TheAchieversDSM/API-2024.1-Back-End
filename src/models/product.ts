@@ -1,26 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany } from "typeorm";
+import { Comment } from "./comment";
 
 @Entity({ name: "product" })
 export class Product {
-  @PrimaryGeneratedColumn({
-    type: "int",
-  })
-  id!: number;
+    @PrimaryColumn({ type: "bigint", name: "id"})
+    id!: number;
 
-  @Column({
-    type: "varchar",
-  })
-  name!: string;
+    @Column({ type: "varchar", nullable:true })
+    name?: string;
 
-  @Column({
-    type: "varchar",
-    nullable: true, 
-  })
-  category?: string; 
+    @Column({ type: "varchar", nullable: true })
+    category?: string;
 
-  @Column({
-    type: "varchar",
-    nullable: true, 
-  })
-  subcategory?: string; 
+    @Column({ type: "varchar", nullable: true })
+    subcategory?: string;
+
+    @Column({ type: "varchar", nullable: true })
+    externalId?: number;
+
+    @OneToMany(() => Comment, comment => comment.product)
+    comments?: Comment[];
 }
