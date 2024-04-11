@@ -138,11 +138,8 @@ class ProductService {
     
             for (const product of products) {
                 const comments = await commentService.getCommentsByProductId(String(product.id));
-
                 for (const comment of comments) {
                     const commentDate = new Date(comment.date).toISOString().split('T')[0];
-                    console.log('Comment date:', commentDate);
-                    console.log('Start date:', startDate, 'End date:', endDate);
                     if (startDate && endDate && commentDate >= startDate && commentDate <= endDate) {
                         if (!averageRatings[commentDate]) {
                             averageRatings[commentDate] = [];
