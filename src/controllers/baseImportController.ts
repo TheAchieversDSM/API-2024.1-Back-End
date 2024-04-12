@@ -11,7 +11,6 @@ import { BaseImportLog } from '../models/baseImportLog';
 
 class BaseImportController {
     public async uploadFile(req: Request, res: Response) {
-        let products = await ProductService.getProducts();
         let dataArray: any[] = []
         try {
             const upload = multer().single('file');

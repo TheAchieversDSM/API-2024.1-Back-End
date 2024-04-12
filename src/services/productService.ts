@@ -40,15 +40,20 @@ class ProductService {
         }
     }
 
-    public async getProducts(): Promise<Product[]> {
+    public async getProducts(skip: number, limit: number): Promise<Product[]> {
         try {
             const productRepository = getRepository(Product);
-            return await productRepository.find();
+            const products = await productRepository.find({
+                skip: skip,
+                take: limit
+            });
+            return products;
         } catch (error) {
             console.error('Error getting products:', error);
             throw error;
         }
     }
+    
 
     public async getAllCategories(): Promise<string[]> {
         try {

@@ -7,7 +7,7 @@ import productService from '../services/productService';
 class ProductController {
     public async getAllProducts(req: Request, res: Response): Promise<void> {
         try {
-            const products = await productService.getProducts();
+            const products = await productService.getProducts(0, 10);
             res.status(200).json(products);
         } catch (error) {
             console.error('Error fetching products:', error);

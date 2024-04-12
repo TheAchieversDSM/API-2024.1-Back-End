@@ -5,7 +5,7 @@ import {
     JoinColumn,
     OneToOne,
 } from "typeorm";
-import { Comment } from "./comment";
+import { Product } from "./product";
 
 
 @Entity({ name: "summary" })
@@ -25,8 +25,8 @@ export class Summary {
     })
     text!: string;
 
-    @OneToOne(() => Comment)
-    @JoinColumn({ name: "comment_id" })
-    comment!: Comment;
+    @OneToOne(() => Product)
+    @JoinColumn({ name: "product_id" })
+    product!: Product;
 
 }
