@@ -121,7 +121,13 @@ class ProductService {
         }
     }
 
-    public async getAverageRatingByCategory(category: string, startDate: string = '2000-01-01', endDate: string = '3099-12-31'): Promise<{ date: string; averageRating: number }[]> {
+    public async getAverageRatingByCategory(
+        category: string,
+        startDate: string = '2000-01-01',
+        endDate: string = '3099-12-31',
+        page: number = 1,
+        limit: number = 1000
+    ): Promise<{ averageResponse: { date: string; averageRating: number }[]; totalPages: number }> {
         try {
             const productRepository = getRepository(Product);
     
@@ -134,7 +140,7 @@ class ProductService {
                 throw new Error('No products found in this category');
             }
     
-            const averageRatings: { [date: string]: number[] } = {}; 
+            const averageRatings: { [date: string]: number[] } = {};
     
             for (const product of products) {
                 const comments = await commentService.getCommentsByProductId(String(product.id));
@@ -156,14 +162,25 @@ class ProductService {
                 averageResponse.push({ date, averageRating });
             }
     
+            averageResponse.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
-            return averageResponse;
+            const totalPages = Math.ceil(averageResponse.length / limit);
     
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+
+            const paginatedResponse = averageResponse.slice(startIndex, endIndex);
+    
+            return {
+                averageResponse: paginatedResponse,
+                totalPages,
+            };
         } catch (error) {
             console.error('Error getting product average rating by category:', error);
             throw error;
         }
     }
+    
       
 }
 

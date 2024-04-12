@@ -76,17 +76,28 @@ class ProductController {
 
     public async getAverageRatingByCategory(req: Request, res: Response): Promise<void> {
       const category = req.params.category;
-      const startDate = req.body.startDate;
-      const endDate = req.body.endDate;
-      
+      const startDate = req.body.startDate || '2000-01-01';
+      const endDate = req.body.endDate || '3099-12-31';
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+  
       try {
-          const averageRating = await productService.getAverageRatingByCategory(category, startDate, endDate);
-          res.status(200).json(averageRating);
+          const { averageResponse, totalPages } = await productService.getAverageRatingByCategory(category, startDate, endDate, page, limit);
+  
+          res.status(200).json({
+              data: averageResponse,
+              pagination: {
+                  page,
+                  limit,
+                  totalPages,
+              },
+          });
       } catch (error) {
           console.error('Error fetching product average rating by category:', error);
           res.status(500).json({ message: 'Internal server error' });
       }
   }
+  
 
 }
 
