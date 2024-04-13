@@ -53,6 +53,9 @@ class ProductController {
     public async getCategories(req: Request, res: Response): Promise<void> {
         try {
             const categories = await productService.getAllCategories();
+
+            categories.sort()
+
             res.status(200).json(categories);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -62,8 +65,8 @@ class ProductController {
 
     public async getProductAverageRating(req: Request, res: Response): Promise<void> {
         const productId = req.params.productId;
-        const startDate = req.body.startDate;
-        const endDate = req.body.endDate;
+        const startDate = req.query.startDate as string ;
+        const endDate = req.query.endDate as string;
         
         try {
             const averageRating = await productService.getProductAverageRating(productId, startDate, endDate);
@@ -76,8 +79,8 @@ class ProductController {
 
     public async getAverageRatingByCategory(req: Request, res: Response): Promise<void> {
       const category = req.params.category;
-      const startDate = req.body.startDate || '2000-01-01';
-      const endDate = req.body.endDate || '3099-12-31';
+      const startDate = req.query.startDate as string || '2000-01-01';
+      const endDate = req.query.endDate as string || '3099-12-31';
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 10;
   
