@@ -1,14 +1,14 @@
 import { Comment } from "../models/index";
 import { Product } from "../models/index";
-import { Summary } from "../models/index";
+import { ProductSummary } from "../models/index";
 
 export class DataService {
 
     private mockComments: Comment[];
     private mockProducts: Product[];
-    private mockSummaries: Summary[];
+    private mockSummaries: ProductSummary[];
 
-    constructor(mockComments: Comment[], mockProducts: Product[], mockSummaries: Summary[]) {
+    constructor(mockComments: Comment[], mockProducts: Product[], mockSummaries: ProductSummary[]) {
         this.mockComments = mockComments;
         this.mockProducts = mockProducts;
         this.mockSummaries = mockSummaries;
@@ -22,7 +22,7 @@ export class DataService {
         return this.mockProducts;
     }
 
-    getAllSummaries(): Summary[] {
+    getAllSummaries(): ProductSummary[] {
         return this.mockSummaries;
     }
 }

@@ -1,6 +1,6 @@
 // import { Comment } from "./index";
 // import { Product } from "./index";
-// import { Summary } from "./index";
+// import { ProductSummary } from "./index";
 
 // export const products: Product[] = [
 //   {
@@ -59,7 +59,7 @@
 //   },
 // ];
 
-// export const summaries: Summary[] = [
+// export const summaries: ProductSummary[] = [
 //   {
 //     id: 1,
 //     amount: 10,
