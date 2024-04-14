@@ -1,41 +1,51 @@
-import { getRepository } from 'typeorm';
+import { In, OneToMany, getRepository } from 'typeorm';
 import PlnApi from '../config/plnApi';
 import { Comment } from '../models';
 import { CategorySummary } from '../models/categorySummary';
-
+import FormData from 'form-data'; // Importe a biblioteca FormData
 
 class CategorySummaryService {
-   public async summarizeByCategory(categories: string[], csv: any, limit: number): Promise<CategorySummary[]> {
+   public async summarizeByCategory(categories: string[], comments: Object[], limit: number): Promise<CategorySummary[]> {
       try {
-        const stringCategories = categories.join(',');
-         console.log('stringCategories:', stringCategories);
-         console.log('csv:', csv);
-         
-      let formData = new FormData();
-      formData.append('csv', csv);
- 
-        const response = await PlnApi.post(`/pln/hot_topics/Brinquedos`, formData, {params: {limit}});
-        
-        const data = response.data;
-        const summarizedCategories: CategorySummary[] = [];
-        Object.keys(data).forEach(async (key) => {
-            const categorySummary = new CategorySummary();
-            categorySummary.category = key;
-            Object.keys(data[key]).forEach((innerKey) => {
-                categorySummary.text = innerKey;
-                categorySummary.amount = data[key][innerKey];
-            });
-            summarizedCategories.push(categorySummary);
-         
-            await getRepository(CategorySummary).save(categorySummary);
-        });
+         const response = await PlnApi.post(`/pln/hotTopics/${categories}`, comments, { params: { limit } });
+         const data = response.data;
 
-        return summarizedCategories;
+         const summarizedCategories = await Promise.all(Object.keys(data).map(async (category) => {
+            if (data[category].length === 0) return null;
+
+            const summaries = await Promise.all(data[category].map(async (element: any) => {
+               const categorySummary = new CategorySummary();
+               categorySummary.category = category;
+               categorySummary.text = Object.keys(element)[0];
+               categorySummary.amount = element[categorySummary.text];
+               return categorySummary;
+            }));
+
+            return summaries;
+         }));
+
+
+         const flattenedSummaries = summarizedCategories.flat().filter((summary) => summary !== null);
+         const categorySummaryRepository = getRepository(CategorySummary);
+         await categorySummaryRepository.save(flattenedSummaries);
+
+         return flattenedSummaries;
       } catch (error) {
          console.error('Error summarizing categories:', error);
          throw error;
       }
    }
+
+   public async getAllSumariesByCategory(categories: string[]): Promise<CategorySummary[]> {
+      try {
+         const categorySummaryRepository = getRepository(CategorySummary);
+         return await categorySummaryRepository.find({ where: { category: In(categories) } });
+      } catch (error) {
+         console.error('Error getting all summaries by category:', error);
+         throw error;
+      }
+   }
+
 
 }
 

@@ -2,10 +2,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    JoinColumn,
-    OneToOne,
 } from "typeorm";
-import { Product } from "./product";
 
 
 @Entity({ name: "category_summary" })

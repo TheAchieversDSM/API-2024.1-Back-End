@@ -8,13 +8,11 @@ import commentService from '../services/commentService';
 import { Comment } from '../models';
 import { getManager } from 'typeorm';
 import { BaseImportLog } from '../models/baseImportLog';
-import * as formidable from 'formidable';
-
-import File from 'express-fileupload'
 import categorySummaryService from '../services/categorySummaryService';
 
 class BaseImportController {
     public async uploadFile(req: Request, res: Response) {
+
     let dataArray: any[] = []
         try {
             const upload = multer().single('file');
@@ -52,7 +50,7 @@ class BaseImportController {
                             dataArray.push(data);
                         })
                         .on('end', async () => {
-                 
+                            
                             const uniqueCategories = new Set();
                             dataArray.forEach((row) => {
                                 uniqueCategories.add(row.site_category_lv1);
@@ -73,8 +71,8 @@ class BaseImportController {
                                     await commentService.createComment(comment);
                                 }
                             });
-                      
-                            await categorySummaryService.summarizeByCategory(categories, req.file, 5);
+                            
+                            const summarizedCategories = await categorySummaryService.summarizeByCategory(categories, dataArray, 500);
 
                         });
                 } else {
