@@ -1,1 +1,5 @@
-// Exportar todos os modulos aqui
+import BaseImportController from "./baseImportController";
+
+import ProductController from "./productController";
+
+export { BaseImportController, ProductController };
