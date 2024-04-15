@@ -1,7 +1,7 @@
 
 import { Request, Response } from 'express';
 import { getManager, getRepository } from 'typeorm';
-import { Product, Comment, Summary } from '../models/index';
+import { Product, Comment, ProductSummary } from '../models/index';
 import productService from '../services/productService';
 
 class ProductController {

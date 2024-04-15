@@ -2,12 +2,12 @@ import { User } from "./user"
 import { Product } from "./product"
 import { Comment } from "./comment"
 import { BaseImportLog } from "./baseImportLog"
-import { Summary } from "./summary"
+import {ProductSummary } from "./productSummary"
 
 export{
     User,
     Product,
     Comment,
-    Summary,
+    ProductSummary,
     BaseImportLog
 }

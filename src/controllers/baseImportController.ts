@@ -8,10 +8,12 @@ import commentService from '../services/commentService';
 import { Comment } from '../models';
 import { getManager } from 'typeorm';
 import { BaseImportLog } from '../models/baseImportLog';
+import categorySummaryService from '../services/categorySummaryService';
 
 class BaseImportController {
     public async uploadFile(req: Request, res: Response) {
-        let dataArray: any[] = []
+
+    let dataArray: any[] = []
         try {
             const upload = multer().single('file');
             upload(req, res, async (err: any) => {
@@ -46,20 +48,32 @@ class BaseImportController {
                             dataArray.push(data);
                         })
                         .on('end', async () => {
+                            
+                            const uniqueCategories = new Set();
+                            dataArray.forEach((row) => {
+                                uniqueCategories.add(row.site_category_lv1);
+                            });
+                            const categories: string[] = Array.from(uniqueCategories) as string[];
+
                             dataArray.forEach(async (row) => {
                                 if (!isNaN(row.product_id)) {
                                     let product = await ProductService.checkAndSaveProduct(row.product_id, row.product_name, row.site_category_lv1, row.site_category_lv2);
 
                                     const comment = new Comment();
                                     comment.product = product;
-                                    comment.text = row.review_text? row.review_text : '';
-                                    comment.rating = row.overall_rating? row.overall_rating : 0;
-                                    comment.date = row.submission_date? row.submission_date : '';
-                                    comment.gender = row.reviewer_gender? row.reviewer_gender : '';
+                                    comment.text = row.review_text ? row.review_text : '';
+                                    comment.rating = row.overall_rating ? row.overall_rating : 0;
+                                    comment.date = row.submission_date ? row.submission_date : '';
+                                    comment.gender = row.reviewer_gender ? row.reviewer_gender : '';
                                     comment.state = row.reviewer_state ? row.reviewer_state : '';
                                     await commentService.createComment(comment);
                                 }
                             });
+                            
+                            const summarizedCategories = await categorySummaryService.summarizeByCategory(categories, dataArray, 10);
+
+                            console.log(summarizedCategories);
+
                         });
                 } else {
                     status = 'unsupported file type';

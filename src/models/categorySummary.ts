@@ -2,18 +2,20 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    JoinColumn,
-    OneToOne,
 } from "typeorm";
-import { Product } from "./product";
 
 
-@Entity({ name: "summary" })
-export class Summary {
+@Entity({ name: "category_summary" })
+export class CategorySummary {
     @PrimaryGeneratedColumn({
         type: "int",
     })
     id!: number;
+
+    @Column({
+        type: "varchar",
+    })
+    category!: string;
 
     @Column({
         type: "int",
@@ -25,8 +27,9 @@ export class Summary {
     })
     text!: string;
 
-    @OneToOne(() => Product)
-    @JoinColumn({ name: "product_id" })
-    product!: Product;
+    @Column({
+        type: "varchar",
+    })
+    type!: string;
 
 }
