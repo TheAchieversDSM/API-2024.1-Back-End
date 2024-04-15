@@ -9,8 +9,9 @@ class summaryController {
     public async getAllSummariesByCategories(req: Request, res: Response): Promise<void> {
         try {
             const categories = req.params.categories.split(',');
+            const type = req.params.type;
 
-            const summaries = await categorySummaryService.getAllSumariesByCategory(categories);
+            const summaries = await categorySummaryService.getAllSumariesByCategory(categories, type);
             res.status(200).json(summaries);
         } catch (error) {
             console.error('Error fetching products:', error);

@@ -27,4 +27,9 @@ export class CategorySummary {
     })
     text!: string;
 
+    @Column({
+        type: "varchar",
+    })
+    type!: string;
+
 }

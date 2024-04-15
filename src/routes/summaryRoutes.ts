@@ -5,6 +5,6 @@ const summaryRoutes = Router();
 
 const summaryController = new SummaryController();
 
-summaryRoutes.get("/getAllByCategories/:categories", summaryController.getAllSummariesByCategories.bind(summaryController));
+summaryRoutes.get("/getAllByCategories/:type/:categories", summaryController.getAllSummariesByCategories.bind(summaryController));
 
 export default summaryRoutes;

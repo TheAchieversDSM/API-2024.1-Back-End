@@ -26,8 +26,6 @@ class BaseImportController {
                     return res.status(400).json({ message: 'No file uploaded' });
                 }
 
-                
-
                 let status = 'success'
 
                 if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
@@ -72,7 +70,9 @@ class BaseImportController {
                                 }
                             });
                             
-                            const summarizedCategories = await categorySummaryService.summarizeByCategory(categories, dataArray, 500);
+                            const summarizedCategories = await categorySummaryService.summarizeByCategory(categories, dataArray, 10);
+
+                            console.log(summarizedCategories);
 
                         });
                 } else {
