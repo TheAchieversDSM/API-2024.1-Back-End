@@ -1,1 +1,3 @@
-// Exportar todos os modulos aqui
+import  UserService  from './userService';
+
+export { UserService }
