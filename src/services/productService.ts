@@ -186,6 +186,104 @@ class ProductService {
         }
     }
     
+    public async getAverageRatingByState(
+        state: string,
+        startDate: string = '2000-01-01',
+        endDate: string = '3099-12-31',
+        page: number = 1,
+        limit: number = 1000
+    ): Promise<{ averageResponse: { date: string; averageRating: number }[]; totalPages: number }> {
+        try {
+            const products = await this.getProducts(0, 1000); // Obtém todos os produtos
+            
+            if (!products.length) {
+                throw new Error('No products found');
+            }
+            
+            const averageRatings: { [date: string]: number[] } = {};
+            
+            for (const product of products) {
+                const comments = await commentService.getCommentsByProductId(String(product.id));
+                
+                for (const comment of comments) {
+                    const commentDate = new Date(comment.date).toISOString().split('T')[0];
+                    
+                    if (
+                        comment.reviewer_state === state && 
+                        commentDate >= startDate && 
+                        commentDate <= endDate
+                    ) {
+                        if (!averageRatings[commentDate]) {
+                            averageRatings[commentDate] = [];
+                        }
+                        averageRatings[commentDate].push(comment.rating);
+                    }
+                }
+            }
+            
+            const averageResponse: { date: string; averageRating: number }[] = [];
+            
+            for (const date in averageRatings) {
+                const ratings = averageRatings[date];
+                const averageRating = parseFloat((ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1));
+                averageResponse.push({ date, averageRating });
+            }
+            
+            averageResponse.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            
+            const totalPages = Math.ceil(averageResponse.length / limit);
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+            
+            const paginatedResponse = averageResponse.slice(startIndex, endIndex);
+            
+            return {
+                averageResponse: paginatedResponse,
+                totalPages,
+            };
+        } catch (error) {
+            console.error('Error getting average rating by state:', error);
+            throw error;
+        }
+    }
+    
+    public async getCommentCountByState(
+        state: string,
+        startDate: string = '2000-01-01',
+        endDate: string = '3099-12-31'
+    ): Promise<number> {
+        try {
+            const products = await this.getProducts(0, 100000000);
+            
+            if (!products.length) {
+                throw new Error('No products found');
+            }
+            
+            let commentCount = 0;
+            
+            for (const product of products) {
+                const comments = await commentService.getCommentsByProductId(String(product.id));
+                
+                for (const comment of comments) {
+                    const commentDate = new Date(comment.date).toISOString().split('T')[0];
+                    
+                    if (
+                        comment.reviewer_state === state && 
+                        commentDate >= startDate && 
+                        commentDate <= endDate
+                    ) {
+                        commentCount++;
+                    }
+                }
+            }
+            
+            return commentCount;
+        } catch (error) {
+            console.error('Error getting comment count by state:', error);
+            throw error;
+        }
+    }
+    
       
 }
 

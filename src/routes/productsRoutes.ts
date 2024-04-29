@@ -12,6 +12,7 @@ productRoutes.delete("/allProducts", product.deleteAllProducts.bind(product));
 productRoutes.get("/categories", product.getCategories.bind(product));
 productRoutes.get("/averageRating/:productId", product.getProductAverageRating.bind(product));
 productRoutes.get("/averageRatingByCategory/:category", product.getAverageRatingByCategory.bind(product));
-
+productRoutes.get("/commentCountByState/:state", product.getCommentCountByState.bind(product)); 
+productRoutes.get("/averageRatingByState/:state", product.getAverageRatingByState.bind(product)); 
 
 export default productRoutes;

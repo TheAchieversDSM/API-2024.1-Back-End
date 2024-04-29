@@ -26,6 +26,9 @@ export class Comment {
     @Column({ type: "varchar", length: 2, nullable: true})
     state!: string;
 
+    @Column({ type: "varchar", length: 2, nullable: true})
+    reviewer_state!: string;
+
     @ManyToOne(() => Product, product => product.comments)
     product!: Product;
 }
