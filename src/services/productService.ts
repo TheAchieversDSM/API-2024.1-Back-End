@@ -186,63 +186,56 @@ class ProductService {
         }
     }
     
-    public async getAverageRatingByState(
+    public async getAverageRatingByStateAndProduct(
         state: string,
+        productId: string,
         startDate: string = '2000-01-01',
         endDate: string = '3099-12-31',
         page: number = 1,
         limit: number = 1000
     ): Promise<{ averageResponse: { date: string; averageRating: number }[]; totalPages: number }> {
         try {
-            const products = await this.getProducts(0, 1000); // Obtém todos os produtos
-            
-            if (!products.length) {
-                throw new Error('No products found');
-            }
-            
+            const comments = await commentService.getCommentsByProductId(productId);
+    
             const averageRatings: { [date: string]: number[] } = {};
-            
-            for (const product of products) {
-                const comments = await commentService.getCommentsByProductId(String(product.id));
-                
-                for (const comment of comments) {
-                    const commentDate = new Date(comment.date).toISOString().split('T')[0];
-                    
-                    if (
-                        comment.reviewer_state === state && 
-                        commentDate >= startDate && 
-                        commentDate <= endDate
-                    ) {
-                        if (!averageRatings[commentDate]) {
-                            averageRatings[commentDate] = [];
-                        }
-                        averageRatings[commentDate].push(comment.rating);
+    
+            for (const comment of comments) {
+                const commentDate = new Date(comment.date).toISOString().split('T')[0];
+    
+                if (
+                    comment.state === state &&
+                    commentDate >= startDate &&
+                    commentDate <= endDate
+                ) {
+                    if (!averageRatings[commentDate]) {
+                        averageRatings[commentDate] = [];
                     }
+                    averageRatings[commentDate].push(comment.rating);
                 }
             }
-            
+    
             const averageResponse: { date: string; averageRating: number }[] = [];
-            
+    
             for (const date in averageRatings) {
                 const ratings = averageRatings[date];
                 const averageRating = parseFloat((ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1));
                 averageResponse.push({ date, averageRating });
             }
-            
+    
             averageResponse.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-            
+    
             const totalPages = Math.ceil(averageResponse.length / limit);
             const startIndex = (page - 1) * limit;
             const endIndex = startIndex + limit;
-            
+    
             const paginatedResponse = averageResponse.slice(startIndex, endIndex);
-            
+    
             return {
                 averageResponse: paginatedResponse,
                 totalPages,
             };
         } catch (error) {
-            console.error('Error getting average rating by state:', error);
+            console.error('Error getting average rating by state and product:', error);
             throw error;
         }
     }
@@ -268,7 +261,7 @@ class ProductService {
                     const commentDate = new Date(comment.date).toISOString().split('T')[0];
                     
                     if (
-                        comment.reviewer_state === state && 
+                        comment.state === state && 
                         commentDate >= startDate && 
                         commentDate <= endDate
                     ) {

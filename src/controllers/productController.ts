@@ -115,19 +115,21 @@ class ProductController {
     }
 }
 
-    public async getAverageRatingByState(req: Request, res: Response): Promise<void> {
-        const state = req.params.state;
-        const startDate = req.query.startDate as string || '2000-01-01';
-        const endDate = req.query.endDate as string || '3099-12-31';
-    
-        try {
-            const averageRating = await productService.getAverageRatingByState(state, startDate, endDate);
-            res.status(200).json(averageRating);
-        } catch (error) {
-        console.error('Error fetching average rating by state:', error);
+public async getAverageRatingByStateAndProduct(req: Request, res: Response): Promise<void> {
+    const state = req.params.state;
+    const productId = req.params.productId;
+    const startDate = req.query.startDate as string || '2000-01-01';
+    const endDate = req.query.endDate as string || '3099-12-31';
+
+    try {
+        const averageRating = await productService.getAverageRatingByStateAndProduct(state, productId, startDate, endDate);
+        res.status(200).json(averageRating);
+    } catch (error) {
+        console.error('Error fetching average rating by state and product:', error);
         res.status(500).json({ message: 'Internal server error' });
-        }
     }
+}
+
 
 }
 

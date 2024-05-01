@@ -66,7 +66,6 @@ class BaseImportController {
                                     comment.date = row.submission_date ? row.submission_date : '';
                                     comment.gender = row.reviewer_gender ? row.reviewer_gender : '';
                                     comment.state = row.reviewer_state ? row.reviewer_state : '';
-                                    comment.state = row.reviewer_state ? row.reviewer_state : '';
                                     await commentService.createComment(comment);
                                 }
                             });

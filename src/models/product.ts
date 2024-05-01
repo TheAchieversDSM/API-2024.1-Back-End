@@ -18,6 +18,9 @@ export class Product {
     @Column({ type: "varchar", nullable: true })
     externalId?: number;
 
+    @Column({ type: "varchar", length: 2, nullable: true})
+    reviewer_state!: string;
+
     @OneToMany(() => Comment, comment => comment.product)
     comments?: Comment[];
 }
