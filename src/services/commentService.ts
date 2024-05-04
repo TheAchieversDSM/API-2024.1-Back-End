@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
 import { Comment } from '../models';
+import CommentInfo from '../interfaces/CommentInfo';
 
 class CommentService {
     public async createComment(comment: Comment): Promise<Comment> {
@@ -32,6 +33,33 @@ class CommentService {
         }
     }
 
+    public async getCommentsAgeGenderAndRatingByDate(productId: string, date: Date): Promise<CommentInfo[]> {
+        try {
+            const commentRepository = getRepository(Comment);
+            const comments = await commentRepository
+                .createQueryBuilder('comment')
+                .select(['comment.age', 'comment.gender', 'comment.rating'])
+                .where('comment.product.id = :productId', { productId: Number(productId) })
+                .andWhere('comment.date = :date', { date: date })
+                .getMany();
+    
+            const commentsInfo: CommentInfo[] = comments.map(comment => ({
+                age: calculateAge(comment.age, date),
+                gender: comment.gender,
+                rating: comment.rating
+            }));
+    
+            return commentsInfo;
+        } catch (error) {
+            console.error('Error getting comments by product id and date:', error);
+            throw error;
+        }
+    
+    function calculateAge(yearOfBirth: number, referenceDate: Date): number {
+        const referenceYear = referenceDate.getFullYear();
+        return referenceYear - yearOfBirth;
+    }
+  }
 }
 
 export default new CommentService();

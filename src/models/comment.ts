@@ -28,4 +28,7 @@ export class Comment {
 
     @ManyToOne(() => Product, product => product.comments)
     product!: Product;
+
+    @Column({ type: "int", nullable: true})
+    age!: number;
 }

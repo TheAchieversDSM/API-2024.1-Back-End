@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { getManager, getRepository } from 'typeorm';
 import { Product, Comment, ProductSummary } from '../models/index';
 import productService from '../services/productService';
+import commentService from '../services/commentService';
 
 class ProductController {
     public async getAllProducts(req: Request, res: Response): Promise<void> {
@@ -130,6 +131,19 @@ public async getAverageRatingByStateAndProduct(req: Request, res: Response): Pro
     }
 }
 
+public async getProductDemography(req: Request, res: Response): Promise<void> {
+    try {
+        const productId: string = req.params.productId; 
+        const date: Date = new Date(req.params.date); 
+
+        const commentsInfo = await commentService.getCommentsAgeGenderAndRatingByDate(productId, date);
+        
+        res.json(commentsInfo);
+    } catch (error) {
+        console.error('Error in getCommentsAgeGenderAndRatingByDateController:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 }
 
