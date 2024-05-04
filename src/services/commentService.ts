@@ -45,7 +45,7 @@ class CommentService {
                 .getMany();
     
             const commentsInfo: CommentInfo[] = comments.map(comment => ({
-                age: calculateAge(comment.age, date),
+                age: this.calculateAge(comment.age, date),
                 gender: comment.gender,
                 rating: comment.rating
             }));
@@ -55,12 +55,12 @@ class CommentService {
             console.error('Error getting comments by product id, date and state:', error);
             throw error;
         }
+    }
     
-    function calculateAge(yearOfBirth: number, referenceDate: Date): number {
+    private calculateAge(yearOfBirth: number, referenceDate: Date): number {
         const referenceYear = referenceDate.getFullYear();
         return referenceYear - yearOfBirth;
     }
-  }
 }
 
 export default new CommentService();
