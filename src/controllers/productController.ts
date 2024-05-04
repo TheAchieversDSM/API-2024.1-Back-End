@@ -133,10 +133,11 @@ public async getAverageRatingByStateAndProduct(req: Request, res: Response): Pro
 
 public async getProductDemography(req: Request, res: Response): Promise<void> {
     try {
-        const productId: string = req.params.productId; 
+        const productId = req.params.productId; 
         const date: Date = new Date(req.params.date); 
+        const state = req.params.state;
 
-        const commentsInfo = await commentService.getCommentsAgeGenderAndRatingByDate(productId, date);
+        const commentsInfo = await commentService.getCommentsAgeGenderAndRatingByDate(productId, date, state);
         
         res.json(commentsInfo);
     } catch (error) {

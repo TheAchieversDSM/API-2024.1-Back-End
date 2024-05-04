@@ -33,7 +33,7 @@ class CommentService {
         }
     }
 
-    public async getCommentsAgeGenderAndRatingByDate(productId: string, date: Date): Promise<CommentInfo[]> {
+    public async getCommentsAgeGenderAndRatingByDate(productId: string, date: Date, state: string): Promise<CommentInfo[]> {
         try {
             const commentRepository = getRepository(Comment);
             const comments = await commentRepository
@@ -41,6 +41,7 @@ class CommentService {
                 .select(['comment.age', 'comment.gender', 'comment.rating'])
                 .where('comment.product.id = :productId', { productId: Number(productId) })
                 .andWhere('comment.date = :date', { date: date })
+                .andWhere('comment.state = :state', { state: state })
                 .getMany();
     
             const commentsInfo: CommentInfo[] = comments.map(comment => ({
@@ -51,7 +52,7 @@ class CommentService {
     
             return commentsInfo;
         } catch (error) {
-            console.error('Error getting comments by product id and date:', error);
+            console.error('Error getting comments by product id, date and state:', error);
             throw error;
         }
     
