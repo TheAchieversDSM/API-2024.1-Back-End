@@ -3,10 +3,9 @@ import {
     PrimaryGeneratedColumn,
     Column,
     JoinColumn,
-    OneToOne,
+    ManyToOne,
 } from "typeorm";
 import { Product } from "./product";
-
 
 @Entity({ name: "product_summary" })
 export class ProductSummary {
@@ -25,8 +24,8 @@ export class ProductSummary {
     })
     text!: string;
 
-    @OneToOne(() => Product)
-    @JoinColumn({ name: "product_id" })
+    
+    @ManyToOne(() => Product)
+    @JoinColumn({ name: "product_id" }) 
     product!: Product;
-
 }
