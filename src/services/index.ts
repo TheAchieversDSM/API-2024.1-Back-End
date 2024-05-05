@@ -1,3 +1,3 @@
-import  UserService  from './userService';
+import { userServiceInstance } from './userService'; 
 
-export { UserService }
+export { userServiceInstance }; 
