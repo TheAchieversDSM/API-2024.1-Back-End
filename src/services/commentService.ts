@@ -48,9 +48,10 @@ class CommentService {
                 .andWhere('comment.date >= :startDate AND comment.date <= :endDate', { startDate, endDate })
                 .andWhere('comment.state = :state', { state: state })
                 .getMany();
-    
+            
+            const endDateTime = new Date(endDate);    
             const commentsInfo: CommentInfo[] = comments.map(comment => ({
-                age: this.calculateAge(comment.age, new Date(endDate)), // Usando endDate como referência para calcular a idade
+                age: endDateTime.getFullYear() - comment.age,
                 gender: comment.gender,
                 rating: comment.rating
             }));
@@ -60,11 +61,6 @@ class CommentService {
             console.error('Error getting comments by product id, date range, and state:', error);
             throw error;
         }
-    }
-    
-    private calculateAge(yearOfBirth: number, referenceDate: Date): number {
-        const referenceYear = referenceDate.getFullYear();
-        return referenceYear - yearOfBirth;
     }
 }
 
