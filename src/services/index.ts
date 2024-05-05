@@ -1,1 +1,3 @@
-// Exportar todos os modulos aqui
+import { userServiceInstance } from './userService'; 
+
+export { userServiceInstance }; 

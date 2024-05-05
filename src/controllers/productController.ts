@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { getManager, getRepository } from 'typeorm';
 import { Product, Comment, ProductSummary } from '../models/index';
 import productService from '../services/productService';
+import commentService from '../services/commentService';
 
 class ProductController {
     public async getAllProducts(req: Request, res: Response): Promise<void> {
@@ -101,6 +102,50 @@ class ProductController {
       }
   }
   
+  public async getCommentCountByState(req: Request, res: Response): Promise<void> {
+    const state = req.params.state;
+    const startDate = req.query.startDate as string || '2000-01-01';
+    const endDate = req.query.endDate as string || '3099-12-31';
+    
+    try {
+        const commentCount = await productService.getCommentCountByState(state, startDate, endDate);
+        res.status(200).json({ commentCount });
+    } catch (error) {
+        console.error('Error fetching comment count by state:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+public async getAverageRatingByStateAndProduct(req: Request, res: Response): Promise<void> {
+    const state = req.params.state;
+    const productId = req.params.productId;
+    const startDate = req.query.startDate as string || '2000-01-01';
+    const endDate = req.query.endDate as string || '3099-12-31';
+
+    try {
+        const averageRating = await productService.getAverageRatingByStateAndProduct(state, productId, startDate, endDate);
+        res.status(200).json(averageRating);
+    } catch (error) {
+        console.error('Error fetching average rating by state and product:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+public async getProductDemography(req: Request, res: Response): Promise<void> {
+    try {
+        const productId = req.params.productId; 
+        const startDate = req.query.startDate as string || '2000-01-01';
+        const endDate = req.query.endDate as string || '3099-12-31';
+        const state = req.params.state;
+
+        const commentsInfo = await commentService.getCommentsAgeGenderAndRatingByDate(productId, startDate, endDate, state);
+        
+        res.json(commentsInfo);
+    } catch (error) {
+        console.error('Error in getCommentsAgeGenderAndRatingByDateController:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 }
 

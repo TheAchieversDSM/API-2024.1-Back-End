@@ -13,18 +13,18 @@ app.use(router);
 
 const PORT = process.env.PORT_PRODUCTION || 1313;
 
+app.listen(PORT, () => {
+  console.log(`App is running on port ${PORT}`);
+});
 
-createConnection({
-  ...DataBaseSource.options,
-})
+DataBaseSource.initialize()
   .then(() => {
-    console.log("Banco de dados conectado com sucesso!");
-    app.listen(PORT, () => {
-      console.log(`App is running on port ${PORT}`);
-    });
+    console.log("Banco inicializado com sucesso!");
   })
-  .catch((error) => {
-    console.error("Erro ao conectar ao banco de dados:", error);
+  .catch((err) => {
+    console.error("Erro durante a inicialização do banco: ", err);
   });
+
+
 
 export default app;
