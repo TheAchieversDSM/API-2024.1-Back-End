@@ -6,14 +6,21 @@ import { Readable } from 'stream';
 import ProductService from '../services/productService';
 import commentService from '../services/commentService';
 import { Comment } from '../models';
-import { getManager } from 'typeorm';
+import { Repository, getRepository, getManager } from 'typeorm';
 import { BaseImportLog } from '../models/baseImportLog';
 import categorySummaryService from '../services/categorySummaryService';
+import { DataBaseSource } from '../config/database';
 
 class BaseImportController {
-    public async uploadFile(req: Request, res: Response) {
 
-    let dataArray: any[] = []
+    private baseImportRepository: Repository<BaseImportLog>;
+
+    constructor() {
+        this.baseImportRepository = DataBaseSource.getRepository(BaseImportLog);
+    }
+
+    public async uploadFile(req: Request, res: Response) {
+        let dataArray: any[] = [];
         try {
             const upload = multer().single('file');
             upload(req, res, async (err: any) => {
@@ -26,7 +33,7 @@ class BaseImportController {
                     return res.status(400).json({ message: 'No file uploaded' });
                 }
 
-                let status = 'success'
+                let status = 'success';
 
                 if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
                     const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
@@ -48,14 +55,13 @@ class BaseImportController {
                             dataArray.push(data);
                         })
                         .on('end', async () => {
-                            
                             const uniqueCategories = new Set();
                             dataArray.forEach((row) => {
                                 uniqueCategories.add(row.site_category_lv1);
                             });
                             const categories: string[] = Array.from(uniqueCategories) as string[];
 
-                            dataArray.forEach(async (row) => {
+                            for (const row of dataArray) {
                                 if (!isNaN(row.product_id)) {
                                     let product = await ProductService.checkAndSaveProduct(row.product_id, row.product_name, row.site_category_lv1, row.site_category_lv2);
 
@@ -69,25 +75,22 @@ class BaseImportController {
                                     comment.age = row.reviewer_age ? row.reviewer_birth_year : 0;
                                     await commentService.createComment(comment);
                                 }
-                            });
-                            
+                            }
+
                             const summarizedCategories = await categorySummaryService.summarizeByCategory(categories, dataArray, 10);
 
                             console.log(summarizedCategories);
-
                         });
                 } else {
                     status = 'unsupported file type';
                 }
 
-
                 const fileName = req.file.originalname;
 
-                const importLogRepository = getManager().getRepository(BaseImportLog);
                 const importLog = new BaseImportLog();
                 importLog.fileName = fileName;
                 importLog.status = status;
-                await importLogRepository.save(importLog);
+                await this.baseImportRepository.save(importLog);
 
                 if (status === 'success') {
                     return res.status(200).json({ message: 'File uploaded successfully' });
@@ -103,8 +106,7 @@ class BaseImportController {
 
     public async getImportLogs(req: Request, res: Response) {
         try {
-            const importLogRepository = getManager().getRepository(BaseImportLog);
-            const importLogs = await importLogRepository.find();
+            const importLogs = await this.baseImportRepository.find();
             return res.json(importLogs);
         } catch (error) {
             console.error(error);
