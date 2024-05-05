@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, PrimaryColumn } from "typeorm";
 import { IsIn } from "class-validator";
 import { Product } from "./product";
 
 @Entity({ name: "comment" })
 export class Comment {
-    @PrimaryGeneratedColumn({ type: "int" })
-    id!: number;
+    @PrimaryColumn({ type: 'varchar'})
+    id!: string;
 
     @Column({ type: "varchar", nullable: true})
     title!: string;
@@ -25,6 +25,12 @@ export class Comment {
 
     @Column({ type: "varchar", length: 2, nullable: true})
     state!: string;
+
+    @Column({ type: "boolean", nullable: true})
+    recommended!: boolean;
+
+    @Column({ type: "int", nullable: true})
+    age!: Number;
 
     @ManyToOne(() => Product, product => product.comments)
     product!: Product;
