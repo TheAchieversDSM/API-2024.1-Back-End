@@ -36,29 +36,29 @@ class CommentService {
             throw error;
         }
     }
+
     public async getCommentsAgeGenderAndRatingByDate(
-        productId: string, 
+        productId: string,
         startDate: string = '2000-01-01',
-        endDate: string = '3099-12-31', 
-        state: string): 
-        Promise<CommentInfo[]> {
+        endDate: string = '3099-12-31',
+        state: string
+    ): Promise<CommentInfo[]> {
         try {
-            const commentRepository = getRepository(Comment);
-            const comments = await commentRepository
+            const comments = await this.commentRepository
                 .createQueryBuilder('comment')
                 .select(['comment.age', 'comment.gender', 'comment.rating'])
                 .where('comment.product.id = :productId', { productId: productId })
                 .andWhere('comment.date >= :startDate AND comment.date <= :endDate', { startDate, endDate })
                 .andWhere('comment.state = :state', { state: state })
                 .getMany();
-            
-            const endDateTime = new Date(endDate);    
+
+            const endDateTime = new Date(endDate);
             const commentsInfo: CommentInfo[] = comments.map(comment => ({
                 age: endDateTime.getFullYear() - comment.age,
                 gender: comment.gender,
                 rating: comment.rating
             }));
-    
+
             return commentsInfo;
         } catch (error) {
             console.error('Error getting comments by product id, date range, and state:', error);
