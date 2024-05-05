@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { UserService } from '../services/index';
+import { userServiceInstance } from '../services/index';
 import jwt from 'jsonwebtoken';
 
 class UserController {
     public async loginUser(req: Request, res: Response): Promise<void> {
         const { email, password } = req.body;
-        const user = await UserService.validateUser(email, password);
+        const user = await userServiceInstance.validateUser(email, password); 
         if (!user) {
           res.status(400).json({ error: 'Invalid email or password' });
           return;
@@ -20,12 +20,12 @@ class UserController {
           res.status(400).json({ error: 'Name, email, and password are required' });
           return;
         }
-        const existingUser = await UserService.findByEmail(email);
+        const existingUser = await userServiceInstance.findByEmail(email); 
         if (existingUser) {
           res.status(400).json({ error: 'Email already exists' });
           return;
         }
-        const newUser = await UserService.createUser(name, email, password);
+        const newUser = await userServiceInstance.createUser(name, email, password);
         res.status(201).json({ id: newUser.id, name: newUser.name, email: newUser.email });
     }
 }
