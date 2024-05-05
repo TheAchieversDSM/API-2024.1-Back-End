@@ -1,64 +1,61 @@
-
 import { Repository, getRepository } from 'typeorm';
-import { Product } from '../models/index'; 
+import { Product } from '../models/index';
 import commentService from './commentService';
-type AverageResponse =[{
+import { DataBaseSource } from '../config/database';
+
+type AverageResponse = {
     date: string;
     averageRating: number;
-}]
+};
 
-interface AverageRatingByCategory {
-    category: string;
-    averageRating: number;
-}
 class ProductService {
-    
+
+    private productRepository: Repository<Product>;
+
+    constructor() {
+        this.productRepository = DataBaseSource.getRepository(Product);
+    }
+
     public async checkAndSaveProduct(productId: string, productName: string, siteCategoryLv1: string, siteCategoryLv2: string): Promise<Product> {
         try {
+            const existingProduct = await this.productRepository.findOne({ where: { id: Number(productId) } });
 
-            const productRepository = getRepository(Product);
-            const existingProduct = await productRepository.findOne({ where: { id: Number(productId) } });
- 
             if (existingProduct) {
                 return existingProduct;
             } else {
                 const newProduct = new Product();
-                newProduct.id =  Number(productId) ;
+                newProduct.id = Number(productId);
                 newProduct.name = productName;
                 newProduct.category = siteCategoryLv1;
                 newProduct.subcategory = siteCategoryLv2;
 
-                await productRepository.save(newProduct);
+                await this.productRepository.save(newProduct);
                 return newProduct;
             }
         } catch (error: any) {
             if (error.code === '23505') {
-                return await getRepository(Product).findOne({ where: { id: Number(productId) } }) as Product;
+                return await this.productRepository.findOne({ where: { id: Number(productId) } }) as Product;
             }
             console.error('Error checking and saving product:', error);
-            throw error; 
+            throw error;
         }
     }
 
     public async getProducts(skip: number, limit: number): Promise<Product[]> {
         try {
-            const productRepository = getRepository(Product);
-            const products = await productRepository.find({
+            return await this.productRepository.find({
                 skip: skip,
                 take: limit
             });
-            return products;
         } catch (error) {
             console.error('Error getting products:', error);
             throw error;
         }
     }
-    
 
     public async getAllCategories(): Promise<string[]> {
         try {
-            const productRepository = getRepository(Product);
-            const categories = await productRepository.createQueryBuilder().select('category').distinct(true).getRawMany();
+            const categories = await this.productRepository.createQueryBuilder().select('category').distinct(true).getRawMany();
             return categories.map((category) => category.category);
         } catch (error) {
             console.error('Error getting categories:', error);
@@ -68,8 +65,7 @@ class ProductService {
 
     public async getProductsByCategory(category: string): Promise<Product[]> {
         try {
-            const productRepository = getRepository(Product);
-            return await productRepository.find({ where: { category } });
+            return await this.productRepository.find({ where: { category } });
         } catch (error) {
             console.error('Error getting products by category:', error);
             throw error;
@@ -78,9 +74,7 @@ class ProductService {
 
     public async getProductAverageRating(productId: string, startDate: string, endDate: string): Promise<any> {
         try {
-            const productRepository = getRepository(Product);
-    
-            const product = await productRepository.findOne({ 
+            const product = await this.productRepository.findOne({ 
                 where: { id: Number(productId) }, 
                 relations: ['comments'] 
             });
@@ -134,9 +128,7 @@ class ProductService {
         limit: number = 1000
     ): Promise<{ averageResponse: { date: string; averageRating: number }[]; totalPages: number }> {
         try {
-            const productRepository = getRepository(Product);
-    
-            const products = await productRepository.find({
+            const products = await this.productRepository.find({
                 where: { category },
                 relations: ['comments']
             });
@@ -275,9 +267,7 @@ class ProductService {
             console.error('Error getting comment count by state:', error);
             throw error;
         }
-    }
-    
-      
+    }  
 }
 
 export default new ProductService();
