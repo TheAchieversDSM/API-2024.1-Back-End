@@ -30,11 +30,8 @@ export class Comment {
     recommended!: boolean;
 
     @Column({ type: "int", nullable: true})
-    age!: Number;
+    age!: number;
 
     @ManyToOne(() => Product, product => product.comments)
     product!: Product;
-
-    @Column({ type: "int", nullable: true})
-    age!: number;
 }
