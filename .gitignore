@@ -3,3 +3,12 @@ node_modules
 ecosystem.config.js
 swagger_output.json
 *.pem
+.git
+node_modules/
+yarn-error.log
+migrations/
+.vscode/
+yarn.lock
+coverage/
+fullchain.pem
+privkey.pem
