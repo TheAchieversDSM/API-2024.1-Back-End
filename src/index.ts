@@ -1,6 +1,21 @@
+
 import express from "express";
 import cors from "cors";
-import { DataBaseSource } from "./config/database";
+import router from "./routes";
+import { createConnection } from "typeorm";
+import { DataBaseSource } from "./config/database"; 
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(router);
+
+const PORT = process.env.PORT_PRODUCTION || 1313;
+
+app.listen(PORT, () => {
+  console.log(`App is running on port ${PORT}`);
+});
 
 DataBaseSource.initialize()
   .then(() => {
@@ -11,16 +26,5 @@ DataBaseSource.initialize()
   });
 
 
-const app = express();
-
-let port = process.env.PORT_PRODUCTION || 5000;
-
-app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
-});
-
-app.use(cors());
-app.use(express.json());
-// app.use(router);
 
 export default app;

@@ -2,10 +2,11 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 import fs from "fs";
-import { User, BaseImportLog, Product, Comment, Summary } from "../models";
+import { User, BaseImportLog, Product, Comment, ProductSummary } from "../models";
+import { CategorySummary } from "../models/categorySummary";
 dotenv.config();
 
-const entidades = [User, BaseImportLog, Product, Comment, Summary];
+const entidades = [User, BaseImportLog, Product, Comment, ProductSummary, CategorySummary];
 
 export const DataBaseSource = process.env.PATH_PEM
   ? new DataSource({
