@@ -11,9 +11,9 @@ const mockRepository = {
 
 describe('getById', () => {
      it(' Deve buscar um produto cadastrado pelo Id', async () =>{
-       const parametro = TesteProduct.giveMeaValidProduct();
-      let mockParametro = mockRepository.find.mockReturnValue([parametro]);
-      expect(mockParametro).toBeTruthy();
+       const product = TesteProduct.giveMeaValidProduct();
+      let mockProcuct = mockRepository.find.mockReturnValue([product]);
+      expect(mockProcuct).toBeTruthy();
   })
 });
 
