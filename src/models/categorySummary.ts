@@ -32,4 +32,9 @@ export class CategorySummary {
     })
     type!: string;
 
+    @Column({
+        type: "varchar",
+    })
+    sentiment_review!: string;
+
 }
