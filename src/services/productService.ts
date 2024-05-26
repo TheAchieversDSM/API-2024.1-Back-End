@@ -1,4 +1,4 @@
-import { Repository, getRepository } from 'typeorm';
+import { In, Repository, getRepository } from 'typeorm';
 import { Product } from '../models/index';
 import commentService from './commentService';
 import { DataBaseSource } from '../config/database';
@@ -268,6 +268,46 @@ class ProductService {
             throw error;
         }
     }  
+
+    public async getAllRecomendationByComments(productsId: number[]): Promise<any[]> {
+        try {
+            const products = await this.productRepository.find({
+                where: { id: In(productsId) },
+                relations: ['comments']
+            });
+    
+            if (!products.length) {
+                throw new Error('No products found');
+            }
+    
+            const productsRecomendation: any[] = [];
+            for (const product of products) {
+                const comments = await commentService.getCommentsByProductId(String(product.id));
+                
+                const { recommendedCount, notRecommendedCount } = comments.reduce((acc, comment) => {
+                    if (comment.recommended) {
+                        acc.recommendedCount += 1;
+                    } else {
+                        acc.notRecommendedCount += 1;
+                    }
+                    return acc;
+                }, { recommendedCount: 0, notRecommendedCount: 0 });
+    
+                productsRecomendation.push({
+                    productName: product.name,
+                    productId: product.id,
+                    recommendedCount: recommendedCount,
+                    notRecommendedCount: notRecommendedCount
+                });
+            }
+            return productsRecomendation;
+        } catch (error) {
+            console.error('Error getting recomendation by comments:', error);
+            throw error;
+        }
+    }
+    
+    
 }
 
 export default new ProductService();

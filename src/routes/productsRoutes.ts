@@ -15,6 +15,7 @@ productRoutes.get("/averageRating/:productId", product.getProductAverageRating.b
 productRoutes.get("/commentCountByState/:state", product.getCommentCountByState.bind(product));  */
 productRoutes.get("/averageRatingByState/:state/:productId", product.getAverageRatingByStateAndProduct.bind(product));
 productRoutes.get("/getProductDemography/:productId/:state", product.getProductDemography.bind(product));
+productRoutes.get("/getAllRecomendation/:productsUuid", product.getAllRecomendation.bind(product));
 
 
 export default productRoutes;

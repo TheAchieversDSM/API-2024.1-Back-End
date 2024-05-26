@@ -24,6 +24,10 @@ export class ProductSummary {
     })
     text!: string;
 
+    @Column({
+        type: "varchar",
+    })
+    sentiment_review!: string;
     
     @ManyToOne(() => Product)
     @JoinColumn({ name: "product_id" }) 
