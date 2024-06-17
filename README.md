@@ -12,6 +12,9 @@
   <img src="https://img.shields.io/badge/TypeScript-23121011?style=for-the-badge&logo=typescript&logoColor=000000&color=CED4DA"/> 
 </p>
  
+  <h3>:gear: Todas as rotas da API estão disponíveis em:</h3>
+
+  <p>https://app.swaggerhub.com/apis/TAISSALOMAOSJC/kitsune-api/1.0.0</p>
  
  <h3>:gear: Execução do Sistema</h3>
  <p>Para rodar o projeto localmente, siga estes passos:</p>
